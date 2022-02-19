@@ -31,6 +31,11 @@ public class ProcessWatcher : IDisposable
         _thread = new Thread(ThreadCallback);
     }
 
+    public void Start()
+    {
+        _thread.Start();
+    }
+
     private void ThreadCallback()
     {
         while (!_disposed)
@@ -52,15 +57,6 @@ public class ProcessWatcher : IDisposable
         }
     }
 
-    /// <param name="invokeStartedIfRunning">
-    ///     If set to <see langword="true" />, this method will check if the process is already running and fire
-    ///     <see cref="ProcessStarted" /> if it is.
-    /// </param>
-    public void Start(bool invokeStartedIfRunning = true)
-    {
-        _thread.Start();
-    }
-
     public void Dispose()
     {
         if (_disposed) return;
@@ -70,6 +66,8 @@ public class ProcessWatcher : IDisposable
         GC.SuppressFinalize(this);
     }
 
+
+    // Fetches every running process and return processes that match the provided process name and arguments.
     private IEnumerable<WmiProcess> FindMatches()
     {
         var query = _wmiHelper.Query<WmiProcess>($"SELECT * FROM Win32_Process WHERE Name = '{_processName}'");
@@ -77,6 +75,7 @@ public class ProcessWatcher : IDisposable
         return matches;
     }
 
+    // Determines whether the nullable WmiProcess matches with the provided process name and arguments.
     private bool IsMatch([NotNullWhen(true)] WmiProcess? wmiProcess)
     {
         if (wmiProcess is null) return false;

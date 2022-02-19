@@ -9,15 +9,9 @@ public class SessionWatcher : IDisposable
 {
     public bool IsLocked { get; private set; }
 
-
-    public void Dispose()
-    {
-        SystemEvents.SessionSwitch -= SystemEventsOnSessionSwitch;
-        GC.SuppressFinalize(this);
-    }
-
     public event EventHandler? Lock;
     public event EventHandler? Unlock;
+
 
     public void Start()
     {
@@ -38,5 +32,11 @@ public class SessionWatcher : IDisposable
                 Unlock?.Invoke(this, EventArgs.Empty);
                 break;
         }
+    }
+
+    public void Dispose()
+    {
+        SystemEvents.SessionSwitch -= SystemEventsOnSessionSwitch;
+        GC.SuppressFinalize(this);
     }
 }
