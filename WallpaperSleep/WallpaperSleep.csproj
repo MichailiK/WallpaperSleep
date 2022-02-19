@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>false</SelfContained>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <DebugType>embedded</DebugType>
+
+        <Copyright>Copyright (c) 2022 Michaili K</Copyright>
+        <FileVersion>0.0.1</FileVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.0" />
+        <PackageReference Include="ORMi" Version="3.2.0.1" />
+    </ItemGroup>
+
+    <Target Name="PublishChildProcess" BeforeTargets="AfterBuild">
+        <MSBuild Projects="..\WallpaperSleep.ChildProcess\WallpaperSleep.ChildProcess.csproj" Targets="Publish" Properties="PublishDir=$(TargetDir)" />
+    </Target>
+
+    <!-- This could be improved upon, but I'm not sure how. I'm not a MSBuild wizard :( -->
+    <Target Name="CopyChildProcessToPublishDirectory" AfterTargets="Publish">
+        <Copy SourceFiles="$(TargetDir)\WallpaperSleep.ChildProcess.exe" DestinationFolder="$(PublishDir)" />
+    </Target>
+</Project>
